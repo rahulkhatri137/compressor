@@ -1,0 +1,59 @@
+name: Compressor
+
+on: [push]
+
+env:
+  FILE_URL: https://mirror.rahul137.workers.dev/Pixel-S-Beta-2-For3GBPartitionUsers-SGSI-GSITutorials/systemmg
+  FILE_NAME:
+  TZ: Asia/Kolkata
+jobs:
+  Compress:
+    runs-on: ubuntu-18.04
+
+    steps:
+       - name: Checkout
+         uses: actions/checkout@master
+       
+       - name: Setup
+         run: |
+           sudo apt install expect aria2 -y
+
+       - name: Download File
+         run: |
+              mkdir -p file
+              cd file
+              if [ -z "$FILE_URL" ]; then
+              echo "Enter url of file to download"
+              exit 1;
+              else echo "Downloading your folder. wait... it can take some seconds/minutes"
+              aria2c -c --max-tries=0 --max-file-not-found=0 $FILE_URL;
+              fi
+       
+       - name: Compress File
+         run: |
+              cd file
+              ls
+              echo "Compressing your folder. wait... it can take some 
+              tar cJvf $FILE_NAME.tar.xz *
+              ls
+
+       - name: Upload File
+         run: |
+              cd file
+              echo "Uploading your file. wait... it can take some seconds/minutes"
+              ls
+              expect -c " 
+              spawn sftp ${{ secrets.SFUSER }}@frs.sourceforge.net
+              expect \"yes/no\"
+              send \"yes\r\"
+              expect \"Password\"        
+              send \"${{ secrets.SFPASS }}\r\"
+              expect \"sftp> \"
+              send \"cd ${{ secrets.SFDIR }}\r\"
+              set timeout -1
+              send \"put *.xz\r\"
+              expect \"Uploading\"
+              expect \"100%\"
+              expect \"sftp>\"
+              send \"bye\r\"
+              interact"
