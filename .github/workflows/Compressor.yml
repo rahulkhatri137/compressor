@@ -1,0 +1,74 @@
+name: Compressor
+
+on: [push]
+
+env:
+  FILE_URL: https://managedway.dl.sourceforge.net/project/nippongsi/Pixel%20-%20PixelS_Beta4.1%20-%20KZNBOAFA0H/PixelS_Beta4.1-AB-12-20210826-nippongsi.img.gz
+  FILE_NAME:
+  TZ: Asia/Kolkata
+jobs:
+  Compress:
+    runs-on: ubuntu-18.04
+
+    steps:
+       - name: Checkout
+         uses: actions/checkout@master
+       
+       - name: Setup
+         run: |
+           sudo apt install expect gzip aria2 -y
+
+       - name: Download File
+         run: |
+              mkdir -p file
+              cd file
+              if [ -z "$FILE_URL" ]; then
+              echo "Enter url of file to download"
+              exit 1;
+              else echo "Downloading your file. wait... it can take some seconds/minutes"
+              aria2c -m0 $FILE_URL;
+              fi
+
+       - name: Decompress File
+         run: |
+              cd file
+              ls
+              if [ -f *.gz ]; then
+              echo "Decompressing your file. wait... it will take some seconds"
+              gzip -dv *.gz;
+              else echo "File is not a gzip!"
+              exit 1;
+              fi
+              ls
+       
+       - name: Compress File
+         run: |
+              cd file
+              ls
+              echo "Compressing your file. wait... it can take some minutes"
+              if [ -z "$FILE_NAME" ]; 
+              then xz -fev9 *; 
+              else xz -cfev9 * > $FILE_NAME.xz ; 
+              fi
+              ls
+
+       - name: Upload File
+         run: |
+              cd file
+              echo "Uploading your file. wait... it can take some seconds/minutes"
+              ls
+              expect -c " 
+              spawn sftp ${{ secrets.SFUSER }}@frs.sourceforge.net
+              expect \"yes/no\"
+              send \"yes\r\"
+              expect \"Password\"        
+              send \"${{ secrets.SFPASS }}\r\"
+              expect \"sftp> \"
+              send \"cd ${{ secrets.SFDIR }}\r\"
+              set timeout -1
+              send \"put *.xz\r\"
+              expect \"Uploading\"
+              expect \"100%\"
+              expect \"sftp>\"
+              send \"bye\r\"
+              interact"
