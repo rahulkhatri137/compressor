@@ -1,0 +1,63 @@
+name: Compressor
+
+on: [push]
+
+env:
+  FILE_URL: https://mirror.rahul137.workers.dev/Pixel3-b2-S-RK137SGSI.xz 
+  FILE_NAME: Pixel3-b2-S-ct
+  TZ: Asia/Kolkata
+jobs:
+  Compress:
+    runs-on: ubuntu-18.04
+
+    steps:
+       - name: Checkout
+         uses: actions/checkout@master
+       
+       - name: Setup
+         run: |
+           sudo apt install expect xz-utils aria2 -y
+
+       - name: Download File
+         run: |
+              mkdir -p file
+              echo "Downloading your file. wait... it can take some seconds/minutes"
+              aria2c -o "file/$FILE_NAME.xz" $FILE_URL
+
+       - name: Decompress File
+         run: |
+              cd file
+              ls
+              echo "Decompressing your file. wait... it will take some seconds"
+              unxz $FILE_NAME.xz
+              ls
+              
+       
+       - name: Compress File
+         run: |
+              cd file
+              ls
+              echo "Compressing your file. wait... it can take some minutes"
+              xz -cfev9 * > $FILE_NAME.xz
+              ls
+
+       - name: Upload File
+         run: |
+              cd file/final
+              echo "Uploading your file. wait... it can take some seconds/minutes"
+              ls
+              expect -c " 
+              spawn sftp ${{ secrets.SFUSER }}@frs.sourceforge.net
+              expect \"yes/no\"
+              send \"yes\r\"
+              expect \"Password\"        
+              send \"${{ secrets.SFPASS }}\r\"
+              expect \"sftp> \"
+              send \"cd ${{ secrets.SFDIR }}\r\"
+              set timeout -1
+              send \"put $FILE_NAME.xz\r\"
+              expect \"Uploading\"
+              expect \"100%\"
+              expect \"sftp>\"
+              send \"bye\r\"
+              interact"
