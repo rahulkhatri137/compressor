@@ -3,12 +3,12 @@ name: Compressor
 on: [push]
 
 env:
-  FILE_URL: https://mirror.rahul137.workers.dev/alpha.zip
+  FILE_URL: https://master.dl.sourceforge.net/project/sgsi137/Test/system.img
   FILE_NAME:
   TZ: Asia/Kolkata
 jobs:
   Compress:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
 
     steps:
        - name: Checkout
@@ -16,7 +16,7 @@ jobs:
        
        - name: Setup
          run: |
-           sudo apt install expect aria2 -y
+           sudo apt update; sudo apt install aria2 git unace p7zip-full p7zip-rar sharutils uudeview mpack arj aptitude liblzma-dev liblz4-tool gawk aria2 brotli lz4 img2simg -y
 
        - name: Download File
          run: |
@@ -28,35 +28,25 @@ jobs:
               else echo "Downloading your file. wait... it can take some seconds/minutes"
               aria2c -c -m 0 $FILE_URL;
               fi
+              sudo img2simg system.img sys.img
 
        - name: Decompress File
          run: |
               cd file
-              ls
-              mkdir -p final
-              if [ -f *.zip ]; then
-              echo "Decompressing your file. wait... it will take some seconds"
-              unzip -q *.zip -d ./final;
-              else echo "File is not a zip!"
-              exit 1;
-              fi
-              cd final
-              ls
+              git clone https://github.com/xpirt/img2sdat sdat ; mv sys.img sdat
+              cd sdat ; sudo chmod -R 777 .; sudo ./img2sdat.py -o tmp -v 4 -p system sys.img
        
        - name: Compress File
          run: |
-              cd file/final
+              cd file/sdat/tmp
               ls
               echo "Compressing your file. wait... it can take some minutes"
-              if [ -z "$FILE_NAME" ]; 
-              then xz -fev9 *; 
-              else xz -cfev9 * > $FILE_NAME.xz ; 
-              fi
+              brotli -9jft *.new.dat
               ls
 
        - name: Upload File
          run: |
-              cd file/final
+              cd file/sdat/tmp
               echo "Uploading your file. wait... it can take some seconds/minutes"
               ls
               expect -c " 
@@ -66,9 +56,9 @@ jobs:
               expect \"Password\"        
               send \"${{ secrets.SFPASS }}\r\"
               expect \"sftp> \"
-              send \"cd ${{ secrets.SFDIR }}\r\"
+              send \"cd /home/pfs/project/sgsi137/Test/Cos\r\"
               set timeout -1
-              send \"put *.xz\r\"
+              send \"put *\r\"
               expect \"Uploading\"
               expect \"100%\"
               expect \"sftp>\"
