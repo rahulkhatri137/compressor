@@ -3,7 +3,7 @@ name: Compressor
 on: [push]
 
 env:
-  FILE_URL: https://master.dl.sourceforge.net/project/sgsi137/Test/system.img
+  FILE_URL: https://master.dl.sourceforge.net/project/sgsi137/Test/Cos/cos_deb.img?viasf=1
   FILE_NAME:
   TZ: Asia/Kolkata
 jobs:
@@ -26,9 +26,9 @@ jobs:
               echo "Enter url of file to download"
               exit 1;
               else echo "Downloading your file. wait... it can take some seconds/minutes"
-              aria2c -c -m 0 $FILE_URL;
+              aria2c -x16 -m 0 $FILE_URL;
               fi
-              sudo img2simg system.img sys.img
+              sudo img2simg *.img sys.img
 
        - name: Decompress File
          run: |
@@ -41,7 +41,7 @@ jobs:
               cd file/sdat/tmp
               ls
               echo "Compressing your file. wait... it can take some minutes"
-              brotli -9jft *.new.dat
+              brotli -9jftZ *.new.dat
               ls
 
        - name: Upload File
