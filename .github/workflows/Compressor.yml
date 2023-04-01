@@ -41,7 +41,7 @@ jobs:
               cd file/sdat/tmp
               ls
               echo "Compressing your file. wait... it can take some minutes"
-              brotli -9jftZ *.new.dat
+              brotli -9kft *.new.dat
               ls
 
        - name: Upload File
