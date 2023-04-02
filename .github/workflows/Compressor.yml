@@ -3,11 +3,9 @@ name: Compressor
 on: [push]
 
 env:
-  URL: https://master.dl.sourceforge.net/project/sgsi137/Test/Cos/Firmware_tree.txt?viasf=1
-  URL2: https://master.dl.sourceforge.net/project/sgsi137/Test/Cos/cos_firmware.img?viasf=1
-  URL3: https://master.dl.sourceforge.net/project/sgsi137/Test/Cos/cos_stock.img?viasf=1
-  URL4: https://master.dl.sourceforge.net/project/sgsi137/Test/cos_1.img?viasf=1
-  URL5: https://master.dl.sourceforge.net/project/sgsi137/Test/build.zip?viasf=1
+  URL: https://master.dl.sourceforge.net/project/sgsi137/Test/Cos/ColorOS-Debloated-System-Tree.txt?viasf=1
+  URL2: https://master.dl.sourceforge.net/project/sgsi137/Test/Cos/cos_deb.img?viasf=1
+  
 jobs:
   Compress:
     runs-on: ubuntu-latest 
@@ -28,7 +26,7 @@ jobs:
               echo "Enter url of file to download"
               exit 1;
               else echo "Downloading your file. wait... it can take some seconds/minutes"
-              aria2c -x16 $URL; aria2c -x16 $URL2; aria2c -x16 $URL3; aria2c -x16 $URL4; aria2c -x16 $URL5
+              aria2c -x16 $URL; aria2c -x16 $URL2
               fi
 
        - name: Upload File
