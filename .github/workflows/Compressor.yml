@@ -3,12 +3,12 @@ name: Compressor
 on: [push]
 
 env:
-  FILE_URL: https://xiaomemeindex.com/treble/Nusantara/20220124/Nusantara-Rawon_v3.4_arm64-bvn-lite_20220124.img
+  FILE_URL: https://master.dl.sourceforge.net/project/sgsi137/Test/Cos/cos_stock.img?viasf=1
   FILE_NAME: 
   TZ: Asia/Kolkata
 jobs:
   Compress:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest 
 
     steps:
        - name: Checkout
@@ -26,7 +26,7 @@ jobs:
               echo "Enter url of file to download"
               exit 1;
               else echo "Downloading your file. wait... it can take some seconds/minutes"
-              aria2c -c --max-tries=0 --max-file-not-found=0 $FILE_URL;
+              aria2c -x16 -c --max-tries=0 --max-file-not-found=0 $FILE_URL;
               fi
        
        - name: Compress File
