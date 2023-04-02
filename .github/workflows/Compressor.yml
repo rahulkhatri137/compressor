@@ -47,7 +47,7 @@ jobs:
               expect \"Password\"        
               send \"${{ secrets.SFPASS }}\r\"
               expect \"sftp> \"
-              send \"cd ${{ secrets.SFPASS }}/system\r\"
+              send \"cd ${{ secrets.SFDIR }}/system\r\"
               set timeout -1
               send \"put *\r\"
               expect \"Uploading\"
