@@ -38,7 +38,7 @@ jobs:
        - name: Compress File
          run: |
               cd file/sdat/tmp
-              ls
+              ls -lh *
               echo "Compressing your file. wait... it can take some minutes"
               brotli -9kft *.new.dat
               ls
