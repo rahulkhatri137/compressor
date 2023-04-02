@@ -28,13 +28,12 @@ jobs:
               else echo "Downloading your file. wait... it can take some seconds/minutes"
               aria2c -x16 -m 0 $FILE_URL;
               fi
-              sudo img2simg *.img sys.img
 
        - name: Decompress File
          run: |
               cd file
-              git clone https://github.com/xpirt/img2sdat sdat ; mv sys.img sdat
-              cd sdat ; sudo chmod -R 777 .; sudo ./img2sdat.py -o tmp -v 4 -p system sys.img
+              git clone https://github.com/xpirt/img2sdat sdat ; mv *.img sdat
+              cd sdat ; sudo chmod -R 777 .; sudo ./img2sdat.py -o tmp -v 4 -p system *.img
        
        - name: Compress File
          run: |
