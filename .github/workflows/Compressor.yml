@@ -16,7 +16,7 @@ jobs:
        
        - name: Setup
          run: |
-           sudo apt update; sudo apt install aria2 git unace p7zip-full p7zip-rar sharutils uudeview mpack arj aptitude liblzma-dev liblz4-tool gawk aria2 brotli lz4 img2simg -y
+           sudo apt update; sudo apt install aria2 git expect unace p7zip-full p7zip-rar sharutils uudeview mpack arj aptitude liblzma-dev liblz4-tool gawk aria2 brotli lz4 img2simg -y
 
        - name: Download File
          run: |
