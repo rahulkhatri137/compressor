@@ -33,7 +33,7 @@ jobs:
          run: |
               cd file
               git clone https://github.com/rahulkhatri137/img2sdat sdat ; mv *.img sdat/system.img
-              cd sdat; mkdir tmp; sudo chmod -R 777 .; sudo ./img2sdat.py *.img -o temp -v 4
+              cd sdat; mkdir tmp; sudo chmod -R 777 .; sudo ./img2sdat.py *.img -o tmp -v 4
        
        - name: Compress File
          run: |
