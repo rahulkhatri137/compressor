@@ -3,7 +3,7 @@ name: Compressor
 on: [push]
 
 env:
-  FILE_URL: https://master.dl.sourceforge.net/project/sgsi137/Test/Cos/cos_deb.img?viasf=1
+  FILE_URL: https://master.dl.sourceforge.net/project/sgsi137/Test/cos_1.img?viasf=1
   FILE_NAME:
   TZ: Asia/Kolkata
 jobs:
@@ -32,8 +32,8 @@ jobs:
        - name: Decompress File
          run: |
               cd file
-              git clone https://github.com/rahulkhatri137/img2sdat -b old sdat ; mv *.img sdat/system.img
-              cd sdat; mkdir tmp; sudo chmod -R 777 .; sudo ./img2sdat.py "system.img" "tmp" "4"
+              git clone https://github.com/rahulkhatri137/img2sdat sdat ; mv *.img sdat/system.img
+              cd sdat; mkdir tmp; sudo chmod -R 777 .; sudo ./img2sdat.py *.img -o temp -v 4
        
        - name: Compress File
          run: |
