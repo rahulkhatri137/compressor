@@ -3,9 +3,11 @@ name: Compressor
 on: [push]
 
 env:
-  FILE_URL: https://master.dl.sourceforge.net/project/sgsi137/Test/Cos/cos_stock.img?viasf=1
-  FILE_NAME: 
-  TZ: Asia/Kolkata
+  URL: https://master.dl.sourceforge.net/project/sgsi137/Test/Cos/Firmware_tree.txt?viasf=1
+  URL2: https://master.dl.sourceforge.net/project/sgsi137/Test/Cos/cos_firmware.img?viasf=1
+  URL3: https://master.dl.sourceforge.net/project/sgsi137/Test/Cos/cos_stock.img?viasf=1
+  URL4: https://master.dl.sourceforge.net/project/sgsi137/Test/cos_1.img?viasf=1
+  URL5: https://master.dl.sourceforge.net/project/sgsi137/Test/build.zip?viasf=1
 jobs:
   Compress:
     runs-on: ubuntu-latest 
@@ -26,19 +28,8 @@ jobs:
               echo "Enter url of file to download"
               exit 1;
               else echo "Downloading your file. wait... it can take some seconds/minutes"
-              aria2c -x16 -c --max-tries=0 --max-file-not-found=0 $FILE_URL;
+              aria2c -x16 $URL; aria2c -x16 $URL2; aria2c -x16 $URL3; aria2c -x16 $URL4; aria2c -x16 $URL5
               fi
-       
-       - name: Compress File
-         run: |
-              cd file
-              ls
-              echo "Compressing your file. wait... it can take some minutes"
-              if [ -z "$FILE_NAME" ]; 
-              then xz -fev9 *; 
-              else xz -cfev9 * > $FILE_NAME.xz ; 
-              fi
-              ls
 
        - name: Upload File
          run: |
@@ -54,7 +45,7 @@ jobs:
               expect \"sftp> \"
               send \"cd ${{ secrets.SFDIR }}\r\"
               set timeout -1
-              send \"put *.xz\r\"
+              send \"put *\r\"
               expect \"Uploading\"
               expect \"100%\"
               expect \"sftp>\"
