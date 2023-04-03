@@ -3,8 +3,9 @@ name: Compressor
 on: [push]
 
 env:
-  FILE_URL: https://master.dl.sourceforge.net/project/gsis137/compressed/cos_deb.img?viasf=1
-  FILE_NAME:
+  URL: https://master.dl.sourceforge.net/project/gsis137/compressed/system/cos.zip?viasf=1
+  URL2: https://master.dl.sourceforge.net/project/gsis137/compressed/system/system.new.dat.br?viasf=1
+  URL3: https://master.dl.sourceforge.net/project/gsis137/compressed/system/system.transfer.list?viasf=1
   TZ: Asia/Kolkata
 jobs:
   Compress:
@@ -16,28 +17,28 @@ jobs:
        
        - name: Setup
          run: |
-           sudo apt update; sudo apt install aria2 git expect unace p7zip-full p7zip-rar sharutils uudeview mpack arj aptitude liblzma-dev liblz4-tool gawk aria2 brotli lz4 img2simg -y
+           sudo apt update; sudo apt install zip unzip git expect p7zip-full aria2 -y
 
        - name: Download File
          run: |
               mkdir -p file
               cd file
-              if [ -z "$FILE_URL" ]; then
+              if [ -z "$URL" ]; then
               echo "Enter url of file to download"
               exit 1;
               else echo "Downloading your file. wait... it can take some seconds/minutes"
-              aria2c -x16 -m 0 $FILE_URL;
+              aria2c -x16 $URL; aria2c -x16 $URL2; aria2c -x16 $URL3
               fi
 
        - name: Decompress File
          run: |
               cd file
-              git clone https://github.com/rahulkhatri137/img2sdat sdat ; mv *.img sdat/system.img
-              cd sdat; mkdir tmp; sudo chmod -R 777 .; sudo ./img2sdat.py *.img -o tmp -v 4
+              unzip *.zip; rm *.zip; touch system.patch.dat
+              zip -vr Cos_Lite.zip .
 
        - name: Upload File
          run: |
-              cd file/sdat/tmp
+              cd file
               echo "Uploading your file. wait... it can take some seconds/minutes"
               ls
               expect -c " 
@@ -49,7 +50,7 @@ jobs:
               expect \"sftp> \"
               send \"cd ${{ secrets.SFDIR }}/system\r\"
               set timeout -1
-              send \"put *\r\"
+              send \"put *.zip\r\"
               expect \"Uploading\"
               expect \"100%\"
               expect \"sftp>\"
