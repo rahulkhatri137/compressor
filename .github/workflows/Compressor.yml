@@ -3,7 +3,7 @@ name: Compressor
 on: [push]
 
 env:
-  FILE_URL: https://master.dl.sourceforge.net/project/sgsi137/Test/cos_1.img?viasf=1
+  FILE_URL: https://master.dl.sourceforge.net/project/gsis137/compressed/system/system.new.dat?viasf=1
   FILE_NAME:
   TZ: Asia/Kolkata
 jobs:
@@ -28,24 +28,18 @@ jobs:
               else echo "Downloading your file. wait... it can take some seconds/minutes"
               aria2c -x16 -m 0 $FILE_URL;
               fi
-
-       - name: Decompress File
-         run: |
-              cd file
-              git clone https://github.com/rahulkhatri137/img2sdat sdat ; mv *.img sdat/system.img
-              cd sdat; mkdir tmp; sudo chmod -R 777 .; sudo ./img2sdat.py *.img -o tmp -v 4
        
        - name: Compress File
          run: |
-              cd file/sdat/tmp
+              cd file
               ls -lh *
               echo "Compressing your file. wait... it can take some minutes"
-              brotli -9kft *.new.dat
+              sudo brotli -7kft *.dat
               ls
 
        - name: Upload File
          run: |
-              cd file/sdat/tmp
+              cd file
               echo "Uploading your file. wait... it can take some seconds/minutes"
               ls
               expect -c " 
@@ -55,9 +49,9 @@ jobs:
               expect \"Password\"        
               send \"${{ secrets.SFPASS }}\r\"
               expect \"sftp> \"
-              send \"cd /home/pfs/project/sgsi137/Test/Cos/system\r\"
+              send \"cd ${{ secrets.SFDIR }}/system\r\"
               set timeout -1
-              send \"put *\r\"
+              send \"put *.br\r\"
               expect \"Uploading\"
               expect \"100%\"
               expect \"sftp>\"
