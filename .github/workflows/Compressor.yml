@@ -34,7 +34,7 @@ jobs:
               cd file
               ls -lh *
               echo "Compressing your file. wait... it can take some minutes"
-              sudo brotli -7kft *.dat
+              sudo brotli -7jf *.dat
               ls
 
        - name: Upload File
